@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Holy Unblocker — Single File</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --bg-soft: #171b23;
+      --panel: rgba(20, 26, 35, 0.9);
+      --panel-border: rgba(255,255,255,0.08);
+      --text: #ebf2ff;
+      --muted: #9aa7ba;
+      --accent: #45d483;
+      --accent-2: #6fe7ff;
+      --danger: #ff5b73;
+      --shadow: 0 18px 45px rgba(0,0,0,0.38);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top, #1d2937 0%, #0f1117 48%, #090b10 100%);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 28px;
+      background: rgba(11, 14, 20, 0.7);
+      border-bottom: 1px solid var(--panel-border);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.92rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 14px rgba(69, 212, 131, 0.8);
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 1px solid var(--panel-border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(111, 231, 255, 0.6);
+      box-shadow: 0 0 0 1px rgba(111,231,255,0.2);
+    }
+
+    .page {
+      width: min(1200px, calc(100% - 32px));
+      margin: 18px auto 32px;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 1fr);
+      flex: 1;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 32px 28px 18px;
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.1rem, 4vw, 4rem);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.7;
+    }
+
+    .toolbar {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--panel-border);
+      background: rgba(8, 10, 16, 0.7);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-height: 56px;
+    }
+
+    .input-wrap:focus-within {
+      border-color: rgba(69, 212, 131, 0.8);
+      box-shadow: 0 0 0 2px rgba(69, 212, 131, 0.18);
+    }
+
+    .input-wrap::before {
+      content: "🔒";
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    input[type="url"]::placeholder {
+      color: var(--muted);
+    }
+
+    .button {
+      border: 0;
+      border-radius: 14px;
+      padding: 0 18px;
+      min-height: 56px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .button.primary {
+      background: linear-gradient(90deg, var(--accent), #80ffb6);
+      color: #0a1e14;
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+    }
+
+    .viewer-panel {
+      overflow: hidden;
+    }
+
+    .viewer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--panel-border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .traffic {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.red { background: #ff5b73; }
+    .dot.yellow { background: #ffd454; }
+    .dot.green { background: #45d483; }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    iframe {
+      width: 100%;
+      min-height: 72vh;
+      border: 0;
+      background: white;
+      display: block;
+    }
+
+    @media (max-width: 760px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .quick-links {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark"></span>
+      <span>Holy Unblocker</span>
+    </a>
+    <nav class="quick-links" aria-label="Quick links">
+      <button class="chip" data-url="https://www.google.com">Google</button>
+      <button class="chip" data-url="https://www.youtube.com">YouTube</button>
+      <button class="chip" data-url="https://discord.com">Discord</button>
+      <button class="chip" data-url="https://www.reddit.com">Reddit</button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="panel hero">
+      <div class="eyebrow">Single-file build</div>
+      <h1>Browse the web without leaving this page.</h1>
+      <p class="lead">
+        This version packages the interface and logic into one HTML file so it can be dropped into a static host or opened directly in a browser.
+      </p>
+
+      <form id="proxy-form" class="toolbar" novalidate>
+        <label class="input-wrap" aria-label="Website URL">
+          <input id="urlInput" type="url" placeholder="https://example.com" value="https://www.google.com" required />
+        </label>
+        <button class="button primary" type="submit">Load page</button>
+        <button class="button secondary" type="button" id="resetBtn">Reset</button>
+      </form>
+    </section>
+
+    <section class="panel viewer-panel">
+      <div class="viewer-header">
+        <div class="traffic" aria-hidden="true">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div id="status" class="status">Ready</div>
+      </div>
+      <iframe id="viewer" title="Web viewer" src="https://www.google.com"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById('urlInput');
+    const form = document.getElementById('proxy-form');
+    const viewer = document.getElementById('viewer');
+    const status = document.getElementById('status');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function normalizeUrl(value) {
+      const trimmed = (value || '').trim();
+      if (!trimmed) return 'https://www.google.com';
+      try {
+        const parsed = new URL(trimmed);
+        return parsed.toString();
+      } catch {
+        try {
+          return new URL('https://' + trimmed).toString();
+        } catch {
+          return 'https://www.google.com';
+        }
+      }
+    }
+
+    function loadPage(target) {
+      const safeTarget = normalizeUrl(target);
+      viewer.src = safeTarget;
+      status.textContent = 'Loading…';
+      input.value = safeTarget;
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      loadPage(input.value);
+    });
+
+    resetBtn.addEventListener('click', function () {
+      const defaultUrl = 'https://www.google.com';
+      input.value = defaultUrl;
+      viewer.src = defaultUrl;
+      status.textContent = 'Ready';
+    });
+
+    document.querySelectorAll('.chip').forEach(function (button) {
+      button.addEventListener('click', function () {
+        loadPage(button.dataset.url);
+      });
+    });
+
+    viewer.addEventListener('load', function () {
+      try {
+        const current = viewer.contentWindow.location.href;
+        if (current && current !== 'about:blank') {
+          status.textContent = 'Loaded';
+        }
+      } catch (error) {
+        status.textContent = 'Loaded (cross-origin page)';
+      }
+    });
+
+    input.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        form.requestSubmit();
+      }
+    });
+
+    loadPage(input.value);
+  </script>
+</body>
+</html>
